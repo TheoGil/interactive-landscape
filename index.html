@@ -10,6 +10,22 @@
     </head>
     <body>
         <canvas id="js-canvas"></canvas>
+        <script type="x-shader/x-vertex" id="vertexShader">
+            /**
+             * Multiply each vertex by the model-view matrix and the projection matrix
+             * (both provided by Three.js) to get a final vertex position
+             */
+            void main()
+            {
+                gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0);
+            }
+        </script>
+        <script type="x-shader/x-fragment" id="fragmentShader">
+            void main()
+            {
+                gl_FragColor = vec4(1.0, 0.0, 1.0, 1.0);
+            }
+        </script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/100/three.min.js"></script>
         <script src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/127738/OrbitControls.js"></script>
         <script src="./script.js"></script>

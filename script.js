@@ -8,10 +8,9 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 camera.position.z = 5;
 
 const geometry = new THREE.BoxGeometry( 1, 1, 1 );
-const material = new THREE.MeshBasicMaterial( {
-  color: 0x156289,
-  emissive: 0x072534,
-  wireframe: true,
+const material = new THREE.ShaderMaterial( {
+  vertexShader: document.getElementById('vertexShader').textContent,
+  fragmentShader: document.getElementById('fragmentShader').textContent
 });
 const cube = new THREE.Mesh( geometry, material );
 scene.add(cube);
