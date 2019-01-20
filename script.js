@@ -1,11 +1,3 @@
-function map (value, start1, stop1, start2, stop2) {
-  return start2 + (stop2 - start2) * ((value - start1) / (stop1 - start1));
-}
-
-function lerp (start, end, amt){
-  return (1 - amt) * start + amt * end;
-}
-
 class AnimatedLandscape {
   constructor() {
     this.scene = null;
@@ -81,16 +73,7 @@ class AnimatedLandscape {
   }
 
   render() {
-    /**
-    // damping mouse for smoother interaction
-    const damplingFactor = 0.2; // The lower, the smoother
-    this.mouse.xDamped = lerp(this.mouse.xDamped, this.mouse.x, damplingFactor);
-    this.mouse.yDamped = lerp(this.mouse.yDamped, this.mouse.y, damplingFactor);
-    */
-
-    // this.terrain.material.uniforms.roadWidth.value = map(this.mouse.x, 0, window.innerWidth, 1, 0);
-    // this.terrain.material.uniforms.intensity.value = map(this.mouse.y, 0, window.innerHeight, 1, 0);
-    this.terrain.material.uniforms.u_time.value += 0.05;
+    // this.terrain.material.uniforms.u_time.value += 0.05;
     this.terrain.material.uniforms.u_time_frag.value += 0.01;
 
     // const terrainSpeed = 0.1;
