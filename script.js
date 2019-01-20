@@ -12,16 +12,14 @@ class AnimatedLandscape {
     this.camera = null;
     this.renderer = null;
     this.terrain = null;
+    this.gui = null;
     this.uniforms = {
-      time: { type: "f", value: 0.0 },
-      roadWidth: { type: "f", value: 0.5 },
-      intensity: { type: "f", value: 0.5 }
-    };
-    this.mouse = {
-      x: 0,
-      y: 0,
-      xDamped: 0,
-      yDamped: 0
+      u_road_width: { type: "f", value: 0.5 },
+      u_max_noise_amount: { type: "f", value: 50.0 },
+      u_noise_scale: { type: "f", value: 0.04 },
+      u_min_elevation_amount: { type: "f", value: 0.0 },
+      u_time: { type: "f", value: 1.0 },
+      u_time_frag: { type: "f", value: 1.0 }
     };
 
     this.init();
@@ -30,10 +28,23 @@ class AnimatedLandscape {
   init(){
     this.setupScene();
     this.setupCamera();
-    this.setupMesh();
+    this.setupTerrain();
+    this.initGUI();
     this.render();
+  }
 
-    window.addEventListener('mousemove', this.onMouseMove.bind(this));
+  initGUI() {
+    this.gui = new dat.GUI();
+    const terrainFolder = this.gui.addFolder('Terrain');
+    terrainFolder.add(this.terrain.material.uniforms.u_road_width, 'value', 0, 1)
+        .name('road width');
+    terrainFolder.add(this.terrain.material.uniforms.u_min_elevation_amount, 'value', 0, 50)
+        .name('min elevation');
+    terrainFolder.add(this.terrain.material.uniforms.u_noise_scale, 'value', 0, 0.1)
+        .name('noise scale');
+    terrainFolder.add(this.terrain.material.uniforms.u_max_noise_amount, 'value', 0, 100)
+        .name('max noise');
+    terrainFolder.open();
   }
 
   setupScene(){
@@ -54,35 +65,40 @@ class AnimatedLandscape {
     new THREE.OrbitControls(this.camera, this.renderer.domElement);
   }
 
-  setupMesh(){
-    const geometry = new THREE.PlaneBufferGeometry(100, 100, 50, 50);
+  setupTerrain(){
+    const geometry = new THREE.PlaneBufferGeometry(150, 500, 50, 50);
     const material = new THREE.ShaderMaterial({
       uniforms: THREE.UniformsUtils.merge([ THREE.ShaderLib.basic.uniforms, this.uniforms ]),
       vertexShader: document.getElementById('vertexShader').textContent,
       fragmentShader: document.getElementById('fragmentShader').textContent,
-      wireframe: true,
-      transparent: true
+      wireframe: false,
+      transparent: true,
+      side: THREE.DoubleSide
     });
     this.terrain = new THREE.Mesh(geometry, material);
     this.terrain.rotation.x = -Math.PI / 2;
     this.scene.add(this.terrain);
   }
 
-  onMouseMove(e) {
-    this.mouse.x = e.clientX;
-    this.mouse.y = e.clientY;
-  }
-
   render() {
+    /**
     // damping mouse for smoother interaction
-    /*
     const damplingFactor = 0.2; // The lower, the smoother
     this.mouse.xDamped = lerp(this.mouse.xDamped, this.mouse.x, damplingFactor);
     this.mouse.yDamped = lerp(this.mouse.yDamped, this.mouse.y, damplingFactor);
     */
 
-    this.terrain.material.uniforms.roadWidth.value = map(this.mouse.x, 0, window.innerWidth, 1, 0);
-    this.terrain.material.uniforms.intensity.value = map(this.mouse.y, 0, window.innerHeight, 1, 0);
+    // this.terrain.material.uniforms.roadWidth.value = map(this.mouse.x, 0, window.innerWidth, 1, 0);
+    // this.terrain.material.uniforms.intensity.value = map(this.mouse.y, 0, window.innerHeight, 1, 0);
+    this.terrain.material.uniforms.u_time.value += 0.05;
+    this.terrain.material.uniforms.u_time_frag.value += 0.01;
+
+    // const terrainSpeed = 0.1;
+    // this.terrain.position.z += terrainSpeed;
+    // console.log(this.terrain.position.z < this.camera.position.z)
+    // if (this.terrain.position.z > this.camera.position.z) {
+    //   this.terrain.position.z = 0;
+    // }
 
     this.renderer.render(this.scene, this.camera);
     requestAnimationFrame(this.render.bind(this));
