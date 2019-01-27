@@ -11,10 +11,10 @@ class AnimatedLandscape {
       yScrollSpeed: 1,
     },
     this.uniforms = {
-      u_road_width: { type: "f", value: 0.5 },
+      u_road_width: { type: "f", value: 0.4 },
+      u_min_elevation_amount: { type: "f", value: 25.0 },
       u_max_noise_amount: { type: "f", value: 50.0 },
       u_noise_scale: { type: "f", value: 0.02 },
-      u_min_elevation_amount: { type: "f", value: 0.0 },
       u_y_scroll_speed: { type: "f", value: 1.0 },
       u_time: { type: "f", value: 0.5 },
       u_time_frag: { type: "f", value: 1.0 }
@@ -47,9 +47,6 @@ class AnimatedLandscape {
 
     terrainFolder.add(this.options, 'yScrollSpeed', 0, 15)
         .name('scroll speed');
-
-
-    terrainFolder.open();
 
     const datGUICameraFolderOptions = {
       toggleCamera: () => {
@@ -89,7 +86,7 @@ class AnimatedLandscape {
   }
 
   setupTerrain(){
-    const geometry = new THREE.PlaneBufferGeometry(150, 500, 100, 200);
+    const geometry = new THREE.PlaneBufferGeometry(300, 500, 100, 200);
     const material = new THREE.ShaderMaterial({
       uniforms: THREE.UniformsUtils.merge([ THREE.ShaderLib.basic.uniforms, this.uniforms ]),
       vertexShader: document.getElementById('vertexShader').textContent,
