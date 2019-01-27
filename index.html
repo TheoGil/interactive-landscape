@@ -334,11 +334,11 @@
 
     #define PI 3.1415926535897932384626433832795
 
-
     uniform float u_road_width;
     uniform float u_max_noise_amount;
     uniform float u_noise_scale;
     uniform float u_min_elevation_amount;
+    uniform float u_y_scroll_speed;
     uniform float u_time;
     varying vec2 vUv;
 
@@ -349,12 +349,14 @@
         float cubicPulseWidth = u_road_width;
 
         // temporarly using 1.0 instead of u_time as second parameter to prevent noise from being animated
-        float displacement = u_max_noise_amount * cnoise(u_noise_scale * vec4(position, 1.0));
+        vec4 wow = vec4(position.x, position.y + u_y_scroll_speed, position.z, 1.0);
+        float displacement = u_max_noise_amount * cnoise(u_noise_scale * wow);
         displacement = displacement + u_min_elevation_amount;
 
         /**
-        displacement amount is being modulated by the cubicPulse function,
-        creating this v looking shape on the x axis */
+         * displacement amount is being modulated by the cubicPulse function,
+         * creating this v looking shape on the x axis
+         */
         displacement = displacement * (1.0 - cubicPulse(cubicPulseX, cubicPulseWidth, uv.x));
 
         vec3 newPosition = position + normal * abs(displacement);

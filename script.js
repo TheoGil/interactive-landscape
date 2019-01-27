@@ -2,15 +2,21 @@ class AnimatedLandscape {
   constructor() {
     this.scene = null;
     this.camera = null;
+    this.debugCamera = null;
     this.renderer = null;
     this.terrain = null;
     this.gui = null;
+    this.currentCamera = null;
+    this.options = {
+      yScrollSpeed: 1,
+    },
     this.uniforms = {
       u_road_width: { type: "f", value: 0.5 },
       u_max_noise_amount: { type: "f", value: 50.0 },
-      u_noise_scale: { type: "f", value: 0.04 },
+      u_noise_scale: { type: "f", value: 0.02 },
       u_min_elevation_amount: { type: "f", value: 0.0 },
-      u_time: { type: "f", value: 1.0 },
+      u_y_scroll_speed: { type: "f", value: 1.0 },
+      u_time: { type: "f", value: 0.5 },
       u_time_frag: { type: "f", value: 1.0 }
     };
 
@@ -22,11 +28,13 @@ class AnimatedLandscape {
     this.setupCamera();
     this.setupTerrain();
     this.initGUI();
+    this.currentCamera = this.camera;
     this.render();
   }
 
   initGUI() {
     this.gui = new dat.GUI();
+
     const terrainFolder = this.gui.addFolder('Terrain');
     terrainFolder.add(this.terrain.material.uniforms.u_road_width, 'value', 0, 1)
         .name('road width');
@@ -36,7 +44,26 @@ class AnimatedLandscape {
         .name('noise scale');
     terrainFolder.add(this.terrain.material.uniforms.u_max_noise_amount, 'value', 0, 100)
         .name('max noise');
+
+    terrainFolder.add(this.options, 'yScrollSpeed', 0, 15)
+        .name('scroll speed');
+
+
     terrainFolder.open();
+
+    const datGUICameraFolderOptions = {
+      toggleCamera: () => {
+        if (this.currentCamera.uuid == this.camera.uuid) {
+          this.currentCamera = this.debugCamera;
+          this.cameraHelper.visible = true;
+        } else {
+          this.currentCamera = this.camera;
+          this.cameraHelper.visible = false;
+        }
+      }
+    };
+    const cameraFolder = this.gui.addFolder('Camera');
+    cameraFolder.add(datGUICameraFolderOptions, 'toggleCamera').name('toggle camera');
   }
 
   setupScene(){
@@ -52,13 +79,17 @@ class AnimatedLandscape {
   setupCamera(){
     this.camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
     this.camera.position.z = 100;
-    this.camera.position.y = 50;
+    this.camera.position.y = 10;
     this.camera.lookAt(0, 0, 0);
-    new THREE.OrbitControls(this.camera, this.renderer.domElement);
+
+    this.debugCamera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+    this.debugCamera.position.set(250, 250, 250);
+    this.debugCamera.lookAt(0, 0, 0);
+    new THREE.OrbitControls(this.debugCamera, this.renderer.domElement);
   }
 
   setupTerrain(){
-    const geometry = new THREE.PlaneBufferGeometry(150, 500, 50, 50);
+    const geometry = new THREE.PlaneBufferGeometry(150, 500, 100, 200);
     const material = new THREE.ShaderMaterial({
       uniforms: THREE.UniformsUtils.merge([ THREE.ShaderLib.basic.uniforms, this.uniforms ]),
       vertexShader: document.getElementById('vertexShader').textContent,
@@ -73,17 +104,11 @@ class AnimatedLandscape {
   }
 
   render() {
-    // this.terrain.material.uniforms.u_time.value += 0.05;
-    this.terrain.material.uniforms.u_time_frag.value += 0.01;
+    this.terrain.material.uniforms.u_y_scroll_speed.value += this.options.yScrollSpeed;
+    this.terrain.material.uniforms.u_time.value += 0.5;
 
-    // const terrainSpeed = 0.1;
-    // this.terrain.position.z += terrainSpeed;
-    // console.log(this.terrain.position.z < this.camera.position.z)
-    // if (this.terrain.position.z > this.camera.position.z) {
-    //   this.terrain.position.z = 0;
-    // }
 
-    this.renderer.render(this.scene, this.camera);
+    this.renderer.render(this.scene, this.currentCamera);
     requestAnimationFrame(this.render.bind(this));
   }
 }
