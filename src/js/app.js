@@ -128,7 +128,10 @@ class AnimatedLandscape {
     this.terrain.material.uniforms.u_y_scroll_speed.value += this.options.yScrollSpeed;
     this.terrain.material.uniforms.u_time.value += 0.5;
 
-    this.pointFactory.update({ speed: this.options.yScrollSpeed });
+    this.pointFactory.update({
+      speed: this.options.yScrollSpeed,
+      zMax: this.player.zPos, // Should use this.player.mesh.position.z instead
+    });
 
     this.renderer.render(this.scene, this.currentCamera);
     window.requestAnimationFrame(this.render.bind(this));

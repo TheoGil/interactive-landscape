@@ -13,9 +13,35 @@
             width: 100%;
             height: 100%;
         }
+
+        .debugger {
+            font-family: monospace;
+            position: fixed;
+            padding: 5px;
+            z-index: 1;
+            background: rgba(139, 195, 74, .5);
+        }
+
+        .debugger__title {
+            font-weight: 800;
+        }
     </style>
 </head>
 <body>
+<table class="debugger">
+    <tr class="debugger__title">
+        <td>Points</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>Alive</td>
+        <td class="js-points-alive-counter"></td>
+    </tr>
+    <tr>
+        <td>Idle</td>
+        <td class="js-points-idle-counter"></td>
+    </tr>
+</table>
 <canvas id="js-canvas"></canvas>
 <script type="x-shader/x-vertex" id="vertexShader">
     //

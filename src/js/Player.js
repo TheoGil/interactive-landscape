@@ -9,6 +9,7 @@ class Player {
     this.scene = scene;
     this.mesh = null;
     this.position = 0;
+    this.zPos = 230;
 
     this.init();
   }
@@ -25,7 +26,7 @@ class Player {
       color: 0x9c27b0,
     });
     this.mesh = new THREE.Mesh(geometry, material);
-    this.mesh.position.z = 230;
+    this.mesh.position.z = this.zPos;
     this.scene.add(this.mesh);
     */
 
@@ -38,8 +39,7 @@ class Player {
     });
 
     const debugLine = new Mesh(geometry1, material1);
-    debugLine.position.z = 230;
-    debugLine.position.z = 230;
+    debugLine.position.z = this.zPos;
     this.scene.add(debugLine);
   }
 

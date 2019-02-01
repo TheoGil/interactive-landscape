@@ -31,6 +31,9 @@ class PointFactory {
       spawnRight: () => {
         this.spawn('right');
       },
+      total: this.max,
+      pointsPoolCount: this.max,
+      pointsActiveCount: 0,
     };
     const pointsFolder = this.gui.addFolder('Points');
     pointsFolder.add(datGUIPointsFolderOptions, 'spawnLeft').name('spawn left');
@@ -47,6 +50,7 @@ class PointFactory {
        * so it will be updated
        */
       const point = this.pool.splice(0, 1);
+      point[0].spawn();
       this.points = this.points.concat(point);
     } else {
       console.log('No points currently available!');
@@ -54,12 +58,23 @@ class PointFactory {
   }
 
   update(options) {
-    this.points.forEach((point) => {
-      point.update({ speed: options.speed });
-      // Check point position
-      // if < XXX
-      // remove it from points and store it back to pool
+    this.points.forEach((point, index) => {
+      point.update(options);
+      if (point.hasReachedPlayer(options.zMax)) {
+        point.kill();
+
+        // Remove current point from active points and store it back into pool
+        this.points.splice(index, 1);
+        this.pool.push(point);
+      }
     });
+
+    this.debug();
+  }
+
+  debug() {
+    document.querySelector('.js-points-alive-counter').textContent = this.points.length;
+    document.querySelector('.js-points-idle-counter').textContent = this.pool.length;
   }
 }
 
