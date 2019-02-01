@@ -1,6 +1,19 @@
-import Rectangle from './Rectangle';
+import {
+  Scene,
+  WebGLRenderer,
+  PerspectiveCamera,
+  PlaneBufferGeometry,
+  ShaderMaterial,
+  UniformsUtils,
+  ShaderLib,
+  DoubleSide,
+  Mesh,
+} from 'three';
+import OrbitControls from 'orbit-controls-es6';
+import * as dat from 'dat.gui';
+import Player from './Player';
+import PointFactory from './PointsFactory';
 
-/*
 class AnimatedLandscape {
   constructor() {
     this.scene = null;
@@ -13,28 +26,26 @@ class AnimatedLandscape {
     this.currentCamera = null;
     this.options = {
       yScrollSpeed: 1,
-    },
-    this.uniforms = {
-      u_road_width: { type: "f", value: 0.4 },
-      u_min_elevation_amount: { type: "f", value: 25.0 },
-      u_max_noise_amount: { type: "f", value: 50.0 },
-      u_noise_scale: { type: "f", value: 0.02 },
-      u_y_scroll_speed: { type: "f", value: this.options.yScrollSpeed },
-      u_time: { type: "f", value: 0.5 },
-      u_time_frag: { type: "f", value: 1.0 }
     };
-
-    this.init();
+    this.uniforms = {
+      u_road_width: { type: 'f', value: 0.4 },
+      u_min_elevation_amount: { type: 'f', value: 25.0 },
+      u_max_noise_amount: { type: 'f', value: 50.0 },
+      u_noise_scale: { type: 'f', value: 0.02 },
+      u_y_scroll_speed: { type: 'f', value: this.options.yScrollSpeed },
+      u_time: { type: 'f', value: 0.5 },
+      u_time_frag: { type: 'f', value: 1.0 },
+    };
   }
 
-  init(){
+  init() {
     this.setupScene();
     this.setupCamera();
     this.setupTerrain();
     this.setupRunner();
     this.initGUI();
     this.setupPointFactory();
-    this.currentCamera = this.camera;
+    this.currentCamera = this.debugCamera;
     this.render();
   }
 
@@ -43,64 +54,64 @@ class AnimatedLandscape {
 
     const terrainFolder = this.gui.addFolder('Terrain');
     terrainFolder.add(this.terrain.material.uniforms.u_road_width, 'value', 0, 1)
-        .name('road width');
+      .name('road width');
     terrainFolder.add(this.terrain.material.uniforms.u_min_elevation_amount, 'value', 0, 50)
-        .name('min elevation');
+      .name('min elevation');
     terrainFolder.add(this.terrain.material.uniforms.u_noise_scale, 'value', 0, 0.1)
-        .name('noise scale');
+      .name('noise scale');
     terrainFolder.add(this.terrain.material.uniforms.u_max_noise_amount, 'value', 0, 100)
-        .name('max noise');
+      .name('max noise');
     terrainFolder.add(this.options, 'yScrollSpeed', 0, 15)
-        .name('scroll speed');
+      .name('scroll speed');
 
     const datGUICameraFolderOptions = {
       toggleCamera: () => {
-        if (this.currentCamera.uuid == this.camera.uuid) {
+        if (this.currentCamera.uuid === this.camera.uuid) {
           this.currentCamera = this.debugCamera;
           this.cameraHelper.visible = true;
         } else {
           this.currentCamera = this.camera;
           this.cameraHelper.visible = false;
         }
-      }
+      },
     };
     const cameraFolder = this.gui.addFolder('Camera');
     cameraFolder.add(datGUICameraFolderOptions, 'toggleCamera').name('toggle camera');
   }
 
-  setupScene(){
-    this.scene = new THREE.Scene();
-    this.renderer = new THREE.WebGLRenderer({
+  setupScene() {
+    this.scene = new Scene();
+    this.renderer = new WebGLRenderer({
       canvas: document.getElementById('js-canvas'),
-      antialias: true
+      antialias: true,
     });
     this.renderer.setSize(window.innerWidth, window.innerHeight);
     this.renderer.setClearColor('white', 1);
   }
 
-  setupCamera(){
-    this.camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+  setupCamera() {
+    this.camera = new PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
     this.camera.position.z = 250;
     this.camera.position.y = 10;
     this.camera.lookAt(0, 0, 0);
 
-    this.debugCamera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+    this.debugCamera = new PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
     this.debugCamera.position.set(250, 250, 250);
     this.debugCamera.lookAt(0, 0, 0);
-    new THREE.OrbitControls(this.debugCamera, this.renderer.domElement);
+    new OrbitControls(this.debugCamera, this.renderer.domElement);
   }
 
-  setupTerrain(){
-    const geometry = new THREE.PlaneBufferGeometry(300, 500, 100, 200);
-    const material = new THREE.ShaderMaterial({
-      uniforms: THREE.UniformsUtils.merge([ THREE.ShaderLib.basic.uniforms, this.uniforms ]),
+  setupTerrain() {
+    const geometry = new PlaneBufferGeometry(300, 500, 100, 200);
+    const material = new ShaderMaterial({
+      uniforms: UniformsUtils.merge([ShaderLib.basic.uniforms, this.uniforms]),
       vertexShader: document.getElementById('vertexShader').textContent,
       fragmentShader: document.getElementById('fragmentShader').textContent,
       wireframe: false,
       transparent: true,
-      side: THREE.DoubleSide
+      side: DoubleSide,
     });
-    this.terrain = new THREE.Mesh(geometry, material);
+    this.terrain = new Mesh(geometry, material);
     this.terrain.rotation.x = -Math.PI / 2;
     this.scene.add(this.terrain);
   }
@@ -120,11 +131,9 @@ class AnimatedLandscape {
     this.pointFactory.update({ speed: this.options.yScrollSpeed });
 
     this.renderer.render(this.scene, this.currentCamera);
-    requestAnimationFrame(this.render.bind(this));
+    window.requestAnimationFrame(this.render.bind(this));
   }
 }
 
-const terrain = new AnimatedLandscape();
-
-*/
-console.log('Aye pépito');
+const lava = new AnimatedLandscape();
+lava.init();

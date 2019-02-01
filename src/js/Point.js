@@ -1,3 +1,10 @@
+import {
+  CylinderGeometry,
+  MeshBasicMaterial,
+  Mesh,
+} from 'three';
+
+
 const initialZposition = -250;
 
 class Point {
@@ -13,11 +20,11 @@ class Point {
   }
 
   setupMesh() {
-    const geometry = new THREE.CylinderGeometry( 2, 2, 20, 32 );
-    const material = new THREE.MeshBasicMaterial({
+    const geometry = new CylinderGeometry(2, 2, 20, 32);
+    const material = new MeshBasicMaterial({
       color: 0xff0000,
     });
-    this.mesh = new THREE.Mesh(geometry, material);
+    this.mesh = new Mesh(geometry, material);
     this.mesh.position.z = initialZposition;
   }
 
@@ -26,3 +33,5 @@ class Point {
     this.mesh.position.z += options.speed;
   }
 }
+
+export default Point;

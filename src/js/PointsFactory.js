@@ -1,3 +1,5 @@
+import Point from './Point';
+
 class PointFactory {
   constructor(scene, gui) {
     this.scene = scene;
@@ -28,7 +30,7 @@ class PointFactory {
       },
       spawnRight: () => {
         this.spawn('right');
-      }
+      },
     };
     const pointsFolder = this.gui.addFolder('Points');
     pointsFolder.add(datGUIPointsFolderOptions, 'spawnLeft').name('spawn left');
@@ -57,6 +59,8 @@ class PointFactory {
       // Check point position
       // if < XXX
       // remove it from points and store it back to pool
-    })
+    });
   }
 }
+
+export default PointFactory;

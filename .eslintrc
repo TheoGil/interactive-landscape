@@ -1,0 +1,9 @@
+{
+  "extends": "eslint-config-airbnb",
+  "env": {
+    "browser": true
+  },
+  "rules": {
+    "no-new": "off"
+  }
+}

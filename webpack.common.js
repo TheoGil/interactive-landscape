@@ -8,7 +8,7 @@ module.exports = {
     path: path.resolve(__dirname, 'dist'),
   },
   resolve: {
-    extensions: ['.js']
+    extensions: ['.js'],
   },
   module: {
     rules: [
@@ -18,17 +18,17 @@ module.exports = {
         use: {
           loader: 'babel-loader',
           options: {
-            presets: ['@babel/preset-env']
-          }
+            presets: ['@babel/preset-env'],
+          },
         },
       },
-    ]
+    ],
   },
   plugins: [
-      new HtmlWebpackPlugin({
-        filename: 'index.html',
-        title: 'Webpack Config!',
-        template: './src/index.html',
-      }),
-  ]
+    new HtmlWebpackPlugin({
+      filename: 'index.html',
+      title: 'LAVA',
+      template: './src/index.html',
+    }),
+  ],
 };

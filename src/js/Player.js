@@ -1,3 +1,9 @@
+import {
+  BoxGeometry,
+  MeshBasicMaterial,
+  Mesh,
+} from 'three';
+
 class Player {
   constructor(scene) {
     this.scene = scene;
@@ -24,14 +30,14 @@ class Player {
     */
 
     // Display a line on the ground for debugging purposes
-    const geometry1 = new THREE.BoxGeometry(300, 1, 1);
-    const material1 = new THREE.MeshBasicMaterial({
+    const geometry1 = new BoxGeometry(300, 1, 1);
+    const material1 = new MeshBasicMaterial({
       color: 0xff0000,
       opacity: 0.5,
       transparent: true,
     });
 
-    const debugLine = new THREE.Mesh(geometry1, material1);
+    const debugLine = new Mesh(geometry1, material1);
     debugLine.position.z = 230;
     debugLine.position.z = 230;
     this.scene.add(debugLine);
@@ -49,6 +55,9 @@ class Player {
       case 39:
         this.moveRight();
         break;
+      default:
+        // Do nothing
+        break;
     }
   }
 
@@ -64,3 +73,5 @@ class Player {
     }
   }
 }
+
+export default Player;
