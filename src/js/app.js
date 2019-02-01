@@ -1,3 +1,6 @@
+import Rectangle from './Rectangle';
+
+/*
 class AnimatedLandscape {
   constructor() {
     this.scene = null;
@@ -122,3 +125,6 @@ class AnimatedLandscape {
 }
 
 const terrain = new AnimatedLandscape();
+
+*/
+console.log('Aye pépito');
