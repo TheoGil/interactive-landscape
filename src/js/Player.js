@@ -1,5 +1,6 @@
 import {
   BoxGeometry,
+  CylinderGeometry,
   MeshBasicMaterial,
   Mesh,
 } from 'three';
@@ -20,15 +21,13 @@ class Player {
   }
 
   setupMesh() {
-    /*
-    const geometry = new THREE.CylinderGeometry( 2, 2, 20, 32 );
-    const material = new THREE.MeshBasicMaterial({
+    const geometry = new CylinderGeometry(2, 2, 20, 32);
+    const material = new MeshBasicMaterial({
       color: 0x9c27b0,
     });
-    this.mesh = new THREE.Mesh(geometry, material);
+    this.mesh = new Mesh(geometry, material);
     this.mesh.position.z = this.zPos;
     this.scene.add(this.mesh);
-    */
 
     // Display a line on the ground for debugging purposes
     const geometry1 = new BoxGeometry(300, 1, 1);

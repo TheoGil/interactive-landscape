@@ -43,9 +43,10 @@ class Point {
     this.mesh.position.z += options.speed;
   }
 
-  spawn() {
+  spawn(x) {
     this.mesh.visible = true;
     this.mesh.position.y = 0;
+    this.mesh.position.x = x;
     this.mesh.position.z = initialZposition;
   }
 

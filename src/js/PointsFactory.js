@@ -23,13 +23,13 @@ class PointFactory {
   setupGUI() {
     const datGUIPointsFolderOptions = {
       spawnLeft: () => {
-        this.spawn('left');
+        this.spawn(-10);
       },
       spawnCenter: () => {
-        this.spawn('center');
+        this.spawn(0);
       },
       spawnRight: () => {
-        this.spawn('right');
+        this.spawn(10);
       },
       total: this.max,
       pointsPoolCount: this.max,
@@ -41,7 +41,7 @@ class PointFactory {
     pointsFolder.add(datGUIPointsFolderOptions, 'spawnRight').name('spawn right');
   }
 
-  spawn(where) {
+  spawn(x) {
     // Check if there is any Point left in pool
     if (this.pool.length > 0) {
       /**
@@ -50,7 +50,7 @@ class PointFactory {
        * so it will be updated
        */
       const point = this.pool.splice(0, 1);
-      point[0].spawn();
+      point[0].spawn(x);
       this.points = this.points.concat(point);
     } else {
       console.log('No points currently available!');
