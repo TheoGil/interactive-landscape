@@ -7,17 +7,19 @@ class PointFactory {
     this.pool = [];
     this.points = [];
     this.max = 5;
+    this.spawnBaseInterval = 2000;
 
     this.init();
   }
 
   init() {
     this.setupGUI();
-    for (let i = 0; i < this.max; i++) {
+    for (let i = 0; i < this.max; i += 1) {
       const point = new Point(this.scene);
       this.scene.add(point.mesh);
       this.pool.push(point);
     }
+    window.setTimeout(this.spawnRandom.bind(this), this.spawnBaseInterval * Math.random());
   }
 
   setupGUI() {
@@ -55,6 +57,14 @@ class PointFactory {
     } else {
       console.log('No points currently available!');
     }
+  }
+
+  spawnRandom() {
+    const positions = [-10, 0, 10];
+    const position = positions[Math.floor(Math.random() * positions.length)];
+    this.spawn(position);
+
+    window.setTimeout(this.spawnRandom.bind(this), this.spawnBaseInterval * Math.random());
   }
 
   update(options) {

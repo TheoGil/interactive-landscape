@@ -21,7 +21,7 @@ class AnimatedLandscape {
     this.debugCamera = null;
     this.renderer = null;
     this.terrain = null;
-    this.runner = null;
+    this.player = null;
     this.gui = null;
     this.currentCamera = null;
     this.options = {
@@ -84,6 +84,7 @@ class AnimatedLandscape {
     this.renderer = new WebGLRenderer({
       canvas: document.getElementById('js-canvas'),
       antialias: true,
+      alpha: true,
     });
     this.renderer.setSize(window.innerWidth, window.innerHeight);
     this.renderer.setClearColor('white', 1);
