@@ -2,39 +2,22 @@ import {
   Scene,
   WebGLRenderer,
   PerspectiveCamera,
-  PlaneBufferGeometry,
-  ShaderMaterial,
-  UniformsUtils,
-  ShaderLib,
-  DoubleSide,
-  Mesh,
 } from 'three';
 import OrbitControls from 'orbit-controls-es6';
 import * as dat from 'dat.gui';
-import Player from './Player';
-import PointFactory from './PointsFactory';
+import Terrain from './Terrain';
 
 class AnimatedLandscape {
   constructor() {
     this.scene = null;
+    this.terrain = null;
     this.camera = null;
     this.debugCamera = null;
     this.renderer = null;
-    this.terrain = null;
-    this.runner = null;
     this.gui = null;
     this.currentCamera = null;
     this.options = {
       yScrollSpeed: 1,
-    };
-    this.uniforms = {
-      u_road_width: { type: 'f', value: 0.4 },
-      u_min_elevation_amount: { type: 'f', value: 25.0 },
-      u_max_noise_amount: { type: 'f', value: 50.0 },
-      u_noise_scale: { type: 'f', value: 0.02 },
-      u_y_scroll_speed: { type: 'f', value: this.options.yScrollSpeed },
-      u_time: { type: 'f', value: 0.5 },
-      u_time_frag: { type: 'f', value: 1.0 },
     };
   }
 
@@ -42,9 +25,7 @@ class AnimatedLandscape {
     this.setupScene();
     this.setupCamera();
     this.setupTerrain();
-    this.setupRunner();
     this.initGUI();
-    this.setupPointFactory();
     this.currentCamera = this.debugCamera;
     this.render();
   }
@@ -53,13 +34,13 @@ class AnimatedLandscape {
     this.gui = new dat.GUI();
 
     const terrainFolder = this.gui.addFolder('Terrain');
-    terrainFolder.add(this.terrain.material.uniforms.u_road_width, 'value', 0, 1)
+    terrainFolder.add(this.terrain.mesh.material.uniforms.u_road_width, 'value', 0, 1)
       .name('road width');
-    terrainFolder.add(this.terrain.material.uniforms.u_min_elevation_amount, 'value', 0, 50)
+    terrainFolder.add(this.terrain.mesh.material.uniforms.u_min_elevation_amount, 'value', 0, 50)
       .name('min elevation');
-    terrainFolder.add(this.terrain.material.uniforms.u_noise_scale, 'value', 0, 0.1)
+    terrainFolder.add(this.terrain.mesh.material.uniforms.u_noise_scale, 'value', 0, 0.1)
       .name('noise scale');
-    terrainFolder.add(this.terrain.material.uniforms.u_max_noise_amount, 'value', 0, 100)
+    terrainFolder.add(this.terrain.mesh.material.uniforms.u_max_noise_amount, 'value', 0, 100)
       .name('max noise');
     terrainFolder.add(this.options, 'yScrollSpeed', 0, 15)
       .name('scroll speed');
@@ -89,6 +70,13 @@ class AnimatedLandscape {
     this.renderer.setClearColor('white', 1);
   }
 
+  setupTerrain() {
+    this.terrain = new Terrain({
+      scene: this.scene,
+      yScrollSpeed: this.options.yScrollSpeed,
+    });
+  }
+
   setupCamera() {
     this.camera = new PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
     this.camera.position.z = 250;
@@ -101,37 +89,9 @@ class AnimatedLandscape {
     new OrbitControls(this.debugCamera, this.renderer.domElement);
   }
 
-  setupTerrain() {
-    const geometry = new PlaneBufferGeometry(300, 500, 100, 200);
-    const material = new ShaderMaterial({
-      uniforms: UniformsUtils.merge([ShaderLib.basic.uniforms, this.uniforms]),
-      vertexShader: document.getElementById('vertexShader').textContent,
-      fragmentShader: document.getElementById('fragmentShader').textContent,
-      wireframe: false,
-      transparent: true,
-      side: DoubleSide,
-    });
-    this.terrain = new Mesh(geometry, material);
-    this.terrain.rotation.x = -Math.PI / 2;
-    this.scene.add(this.terrain);
-  }
-
-  setupRunner() {
-    this.player = new Player(this.scene);
-  }
-
-  setupPointFactory() {
-    this.pointFactory = new PointFactory(this.scene, this.gui);
-  }
-
   render() {
-    this.terrain.material.uniforms.u_y_scroll_speed.value += this.options.yScrollSpeed;
-    this.terrain.material.uniforms.u_time.value += 0.5;
-
-    this.pointFactory.update({
-      speed: this.options.yScrollSpeed,
-      zMax: this.player.zPos, // Should use this.player.mesh.position.z instead
-    });
+    this.terrain.mesh.material.uniforms.u_y_scroll_speed.value += this.options.yScrollSpeed;
+    this.terrain.mesh.material.uniforms.u_time.value += 0.5;
 
     this.renderer.render(this.scene, this.currentCamera);
     window.requestAnimationFrame(this.render.bind(this));
