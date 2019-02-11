@@ -2,10 +2,22 @@ import {
   Scene,
   WebGLRenderer,
   PerspectiveCamera,
+  BoxGeometry,
+  MeshStandardMaterial,
+  Mesh,
+  PointLight,
+  AmbientLight,
+  PointLightHelper,
+  DirectionalLightHelper,
+  DirectionalLight,
+  SpotLightHelper,
+  SpotLight,
 } from 'three';
 import OrbitControls from 'orbit-controls-es6';
 import * as dat from 'dat.gui';
 import Terrain from './Terrain';
+import LightHelper from './LighHelper';
+import SuperPointLightHelper from "./PointLighHelper";
 
 class AnimatedLandscape {
   constructor() {
@@ -17,34 +29,38 @@ class AnimatedLandscape {
     this.gui = null;
     this.currentCamera = null;
     this.options = {
-      yScrollSpeed: 1,
+      yScrollSpeed: 0.25,
     };
   }
 
   init() {
+    this.initGUI();
     this.setupScene();
     this.setupCamera();
     this.setupTerrain();
-    this.initGUI();
     this.currentCamera = this.debugCamera;
     this.render();
+
+    // Add ambient light
+    this.scene.add(new AmbientLight( 0x404040 ));
+
+
+    const light = new LightHelper({
+      type: 'SpotLight',
+      gui: this.gui,
+      name: 'Lumière',
+    });
+    // light.addTo(this.scene);
+
+    const pointlight = new SuperPointLightHelper({
+      gui: this.gui,
+      name: 'pointlight',
+    });
+    pointlight.addTo(this.scene);
   }
 
   initGUI() {
     this.gui = new dat.GUI();
-
-    const terrainFolder = this.gui.addFolder('Terrain');
-    terrainFolder.add(this.terrain.mesh.material.uniforms.u_road_width, 'value', 0, 1)
-      .name('road width');
-    terrainFolder.add(this.terrain.mesh.material.uniforms.u_min_elevation_amount, 'value', 0, 50)
-      .name('min elevation');
-    terrainFolder.add(this.terrain.mesh.material.uniforms.u_noise_scale, 'value', 0, 0.1)
-      .name('noise scale');
-    terrainFolder.add(this.terrain.mesh.material.uniforms.u_max_noise_amount, 'value', 0, 100)
-      .name('max noise');
-    terrainFolder.add(this.options, 'yScrollSpeed', 0, 15)
-      .name('scroll speed');
-
     const datGUICameraFolderOptions = {
       toggleCamera: () => {
         if (this.currentCamera.uuid === this.camera.uuid) {
@@ -65,15 +81,17 @@ class AnimatedLandscape {
     this.renderer = new WebGLRenderer({
       canvas: document.getElementById('js-canvas'),
       antialias: true,
+      // background: new Color(0xEEEEEE),
     });
     this.renderer.setSize(window.innerWidth, window.innerHeight);
-    this.renderer.setClearColor('white', 1);
+    // this.renderer.setClearColor('white', 1);
   }
 
   setupTerrain() {
     this.terrain = new Terrain({
       scene: this.scene,
       yScrollSpeed: this.options.yScrollSpeed,
+      gui: this.gui,
     });
   }
 

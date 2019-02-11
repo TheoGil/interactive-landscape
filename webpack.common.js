@@ -22,6 +22,14 @@ module.exports = {
           },
         },
       },
+      {
+        test: /\.(glsl|vert|frag)$/,
+        exclude: /node_modules/,
+        use: [
+          'raw-loader',
+          'glslify-loader',
+        ],
+      },
     ],
   },
   plugins: [
